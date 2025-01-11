@@ -9,7 +9,7 @@ const dotenv = require('dotenv');
 
 // Middleware
 app.use(cors({
-  origin: ['https://shrifrontend-git-main-shriram-mangesh-walawalkars-projects.vercel.app', 'http://localhost:3000'],
+  origin: ['https://shrifrontend-j7j0mw5g2-shriram-mangesh-walawalkars-projects.vercel.app', 'http://localhost:3000'],
   credentials: true
 }));
 
