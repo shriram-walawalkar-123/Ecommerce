@@ -9,8 +9,16 @@ const dotenv = require('dotenv');
 
 // Middleware
 app.use(cors({
-  origin: ['https://shrifrontend-j7j0mw5g2-shriram-mangesh-walawalkars-projects.vercel.app', 'http://localhost:3000'],
-  credentials: true
+  origin: [
+    'https://shrifrontend.vercel.app',
+    'https://shrifrontend-git-main-shriram-mangesh-walawalkars-projects.vercel.app',
+    'https://shrifrontend-j7j0mw5g2-shriram-mangesh-walawalkars-projects.vercel.app',
+    'https://shrifrontend.vercel.app',
+    'http://localhost:3000'
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization', 'Access-Control-Allow-Credentials']
 }));
 
 // app.use(express.json());
