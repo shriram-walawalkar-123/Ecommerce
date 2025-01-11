@@ -25,10 +25,9 @@ const Products = () => {
     const [category, setCategory] = useState('');
     const [ratings, setRatings] = useState(0);
 
-    const { loading, error, products, resultPerPage, productsCount, filterProductsCount } = useSelector(state => state.products);
+    const { loading, error, products, resultPerPage, productsCount } = useSelector(state => state.products);
     const { keyword } = useParams();
     
-    const count = filterProductsCount;
     const totalPages = Math.ceil(productsCount / resultPerPage);
 
     const handlePageChange = (pageNumber) => {
