@@ -8,17 +8,23 @@ const fileUpload = require('express-fileupload');
 const dotenv = require('dotenv');
 
 // Middleware
+// app.use(cors({
+//   origin: [
+//     'https://shrifrontend.vercel.app/',
+//     'https://shrifrontend-git-main-shriram-mangesh-walawalkars-projects.vercel.app/',
+//     'https://shrifrontend-ppx1bfo1e-shriram-mangesh-walawalkars-projects.vercel.app/',
+//     'http://localhost:3000'
+//   ],
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+//   credentials: true,
+//   allowedHeaders: ['Content-Type', 'Authorization', 'Access-Control-Allow-Credentials']
+// }));
+
 app.use(cors({
-  origin: [
-    'https://shrifrontend.vercel.app',
-    'https://shrifrontend-git-main-shriram-mangesh-walawalkars-projects.vercel.app',
-    'https://shrifrontend-j7j0mw5g2-shriram-mangesh-walawalkars-projects.vercel.app',
-    'https://shrifrontend.vercel.app',
-    'http://localhost:3000'
-  ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  credentials: true,
-  allowedHeaders: ['Content-Type', 'Authorization', 'Access-Control-Allow-Credentials']
+  origin: '*', // Allow access from any origin
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], // Allowed HTTP methods
+  credentials: true, // Include credentials like cookies or headers
+  allowedHeaders: ['Content-Type', 'Authorization', 'Access-Control-Allow-Credentials'] // Allowed custom headers
 }));
 
 // app.use(express.json());
