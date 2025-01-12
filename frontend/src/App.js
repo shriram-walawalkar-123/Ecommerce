@@ -41,23 +41,63 @@ import { baseURL } from './config/config';
 
 const App = () => {
   const { user, isAuthenticated } = useSelector(state => state.user);
-  const [stripeApiKey,setStripeApiKey] = useState(null); 
+  const [stripeApiKey, setStripeApiKey] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     store.dispatch(loadUser());
-    async function getStripeApiKey() {
+    
+    const getStripeApiKey = async () => {
       try {
-        const { data } = await axios.get(`${baseURL}/api/v1/stripeapikey`);
+        const config = {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true  
+        };
+
+        const { data } = await axios.get(
+          `${baseURL}/api/v1/stripeapikey`,
+          config
+        );
         setStripeApiKey(data.stripeApiKey);
       } catch (error) {
         console.error("Error fetching Stripe API Key:", error);
+      } finally {
+        setLoading(false);
       }
+    };
+
+    if (isAuthenticated) {
+      getStripeApiKey();
+    } else {
+      setLoading(false);
     }
-
-    getStripeApiKey();
-  }, []);
-
+  }, [isAuthenticated]); 
   const stripePromise = stripeApiKey ? loadStripe(stripeApiKey) : null;
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  // const { user, isAuthenticated } = useSelector(state => state.user);
+  // const [stripeApiKey,setStripeApiKey] = useState(null); 
+
+  // useEffect(() => {
+  //   store.dispatch(loadUser());
+  //   async function getStripeApiKey() {
+  //     try {
+  //       const { data } = await axios.get(`${baseURL}/api/v1/stripeapikey`);
+  //       setStripeApiKey(data.stripeApiKey);
+  //     } catch (error) {
+  //       console.error("Error fetching Stripe API Key:", error);
+  //     }
+  //   }
+
+  //   getStripeApiKey();
+  // }, []);
+
+  // const stripePromise = stripeApiKey ? loadStripe(stripeApiKey) : null;
 
   return (
     <Provider store={store}>
