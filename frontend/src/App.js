@@ -37,6 +37,7 @@ import ProcessOrder from './component/Admin/ProcessOrder';
 import UsersList from './component/Admin/UsersList';
 import UpdateUser from './component/Admin/UpdateUser';
 import ProductReviews from './component/Admin/ProductReviews';
+import { baseURL } from './config/config';
 
 const App = () => {
   const { user, isAuthenticated } = useSelector(state => state.user);
@@ -46,7 +47,7 @@ const App = () => {
     store.dispatch(loadUser());
     async function getStripeApiKey() {
       try {
-        const { data } = await axios.get("/api/v1/stripeapikey");
+        const { data } = await axios.get(`${baseURL}/api/v1/stripeapikey`);
         setStripeApiKey(data.stripeApiKey);
       } catch (error) {
         console.error("Error fetching Stripe API Key:", error);
