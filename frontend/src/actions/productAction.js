@@ -29,7 +29,7 @@ export const getProductDetails = (id) => async(dispatch) => {
     try {
         dispatch({ type: PRODUCT_DETAILS_REQUEST });
 
-        const { data } = await axios.get(`/api/v1/product/${id}`);
+        const { data } = await axios.get(`${baseURL}/api/v1/product/${id}`);
 
         dispatch({
             type: PRODUCT_DETAILS_SUCCESS,
@@ -54,7 +54,7 @@ export const newReview = (reviewData) => async(dispatch) => {
             }
         }
 
-        const { data } = await axios.put(`/api/v1/review`,reviewData,config);
+        const { data } = await axios.put(`${baseURL}/api/v1/review`,reviewData,config);
 
         dispatch({
             type: NEW_REVIEW_SUCCESS,
@@ -73,7 +73,7 @@ export const getAdminProduct = () => async(dispatch) => {
     try {
         dispatch({ type: ADMIN_PRODUCT_REQUEST });
 
-        const { data } = await axios.get(`/api/v1/admin/products`);
+        const { data } = await axios.get(`${baseURL}/api/v1/admin/products`);
 
         dispatch({
             type: ADMIN_PRODUCT_SUCCESS,
@@ -98,7 +98,7 @@ export const createProduct = (productData) => async(dispatch) => {
             },
           };
 
-        const { data } = await axios.post(`/api/v1/admin/product/new`,productData,config);
+        const { data } = await axios.post(`${baseURL}/api/v1/admin/product/new`,productData,config);
 
         dispatch({
             type: NEW_PRODUCT_SUCCESS,
@@ -117,7 +117,7 @@ export const deleteProduct = (id) => async(dispatch) => {
     try {
         dispatch({ type: DELETE_PRODUCT_REQUEST });
 
-        const { data } = await axios.delete(`/api/v1/admin/product/${id}`);
+        const { data } = await axios.delete(`${baseURL}/api/v1/admin/product/${id}`);
 
         dispatch({
             type: DELETE_PRODUCT_SUCCESS,
@@ -137,9 +137,9 @@ export const getAdminProductDetails = (id) => async(dispatch) => {
         dispatch({ type: PRODUCT_DETAILS_REQUEST });
         
         // Log the API call
-        console.log('Fetching product:', `/api/v1/admin/product/${id}`);
+        console.log('Fetching product:', `${baseURL}/api/v1/admin/product/${id}`);
 
-        const { data } = await axios.get(`/api/v1/admin/product/${id}`);
+        const { data } = await axios.get(`${baseURL}/api/v1/admin/product/${id}`);
         console.log('Response:', data);
 
         dispatch({
@@ -159,7 +159,7 @@ export const editProduct = (id, productData) => async(dispatch) => {
     try {
         dispatch({ type: UPDATE_PRODUCT_REQUEST });
         
-        const { data } = await axios.put(`/api/v1/admin/product/${id}`, productData);
+        const { data } = await axios.put(`${baseURL}/api/v1/admin/product/${id}`, productData);
 
         dispatch({
             type: UPDATE_PRODUCT_SUCCESS,
@@ -178,7 +178,7 @@ export const getAllReviews = (id) => async (dispatch) => {
     try {
       dispatch({ type: ALL_REVIEW_REQUEST });
   
-      const { data } = await axios.get(`/api/v1/reviews?id=${id}`);
+      const { data } = await axios.get(`${baseURL}/api/v1/reviews?id=${id}`);
   
       dispatch({
         type: ALL_REVIEW_SUCCESS,
@@ -197,7 +197,7 @@ export const deleteReviews = (reviewId, productId) => async (dispatch) => {
       dispatch({ type: DELETE_REVIEW_REQUEST });
   
       const { data } = await axios.delete(
-        `/api/v1/reviews?id=${reviewId}&productId=${productId}`
+        `${baseURL}/api/v1/reviews?id=${reviewId}&productId=${productId}`
       );
   
       dispatch({
