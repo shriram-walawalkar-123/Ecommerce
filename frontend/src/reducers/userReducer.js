@@ -63,15 +63,7 @@ import { LOGIN_FAIL,LOGIN_REQUEST,LOGIN_SUCCESS,CLEAR_ERRORS,REGISTER_USER_FAIL,
 //             }
 // }
 
-export const userReducer = (
-  state = {
-    user: null,
-    loading: false,
-    isAuthenticated: false,
-    error: null
-  },
-  action
-) => {
+export const userReducer = (state = { user: null }, action) => {
   switch (action.type) {
     case LOGIN_REQUEST:
     case REGISTER_USER_REQUEST:
@@ -80,9 +72,8 @@ export const userReducer = (
         ...state,
         loading: true,
         isAuthenticated: false,
-        error: null
+        error: null,
       };
-    
     case LOGIN_SUCCESS:
     case REGISTER_USER_SUCCESS:
     case LOAD_USER_SUCCESS:
@@ -91,48 +82,33 @@ export const userReducer = (
         loading: false,
         isAuthenticated: true,
         user: action.payload,
-        error: null
+        error: null,
       };
-
     case LOGOUT_USER_SUCCESS:
       return {
         loading: false,
         user: null,
         isAuthenticated: false,
-        error: null
       };
-
     case LOGIN_FAIL:
     case REGISTER_USER_FAIL:
-      return {
-        ...state,
-        loading: false,  // Changed from true to false
-        isAuthenticated: false,
-        user: null,
-        error: action.payload
-      };
-    
     case LOAD_USER_FAIL:
       return {
+        ...state,
         loading: false,
         isAuthenticated: false,
-        user: null,
-        error: action.payload
+        error: action.payload,
       };
-
     case LOGOUT_USER_FAIL:
       return {
         ...state,
-        loading: false,
-        error: action.payload
+        error: action.payload,
       };
-
     case CLEAR_ERRORS:
       return {
         ...state,
-        error: null
+        error: null,
       };
-        
     default:
       return state;
   }
