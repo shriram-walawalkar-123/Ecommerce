@@ -66,7 +66,7 @@ import { LOGIN_FAIL,LOGIN_REQUEST,LOGIN_SUCCESS,CLEAR_ERRORS,REGISTER_USER_FAIL,
 export const userReducer = (
   state = {
     user: null,
-    loading: true,
+    loading: false,
     isAuthenticated: false,
     error: null
   },

@@ -232,21 +232,18 @@
 
 // export default LoginAndSignUp;
 
-
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { login, register, clearErrors } from '../../actions/userActions';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const LoginAndSignUp = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
-
   const [activeTab, setActiveTab] = useState('login');
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [user, setUser] = useState({
     name: '',
@@ -255,45 +252,23 @@ const LoginAndSignUp = () => {
   });
 
   const [avatar, setAvatar] = useState(null);
-  const [avatarPreview, setAvatarPreview] = useState('/Profile.png'); // Default avatar
+  const [avatarPreview, setAvatarPreview] = useState('/Profile.png');
 
-  const { loading, error, isAuthenticated, message } = useSelector(
-    (state) => state.user
-  );
-
-  // Reset form function
-  const resetForm = () => {
-    if (activeTab === 'login') {
-      setLoginEmail('');
-      setLoginPassword('');
-    } else {
-      setUser({
-        name: '',
-        email: '',
-        password: '',
-      });
-      setAvatar(null);
-      setAvatarPreview('/Profile.png');
-    }
-  };
+  const { loading, error, isAuthenticated } = useSelector((state) => state.user);
 
   const loginSubmit = async (e) => {
     e.preventDefault();
-    try {
-      await dispatch(login(loginEmail, loginPassword));
-    } catch (err) {
-      console.error('Login error:', err);
-    }
+    setIsSubmitting(true);
+    await dispatch(login(loginEmail, loginPassword));
+    setIsSubmitting(false);
   };
 
   const registerSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     if (!user.name || !user.email || !user.password) {
-      dispatch({
-        type: 'SET_ERROR',
-        payload: 'Please fill in all required fields'
-      });
+      setIsSubmitting(false);
       return;
     }
 
@@ -301,19 +276,17 @@ const LoginAndSignUp = () => {
     formData.append('name', user.name);
     formData.append('email', user.email);
     formData.append('password', user.password);
-
     if (avatar) {
       formData.append('avatar', avatar);
     }
 
     try {
       await dispatch(register(formData));
-      setSuccessMessage('Registration successful! Please login.');
       setActiveTab('login');
-      resetForm();
     } catch (error) {
       console.error('Registration error:', error);
     }
+    setIsSubmitting(false);
   };
 
   const registerDataChange = (e) => {
@@ -334,60 +307,45 @@ const LoginAndSignUp = () => {
     }
   };
 
-  // Handle tab change
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-    setSuccessMessage('');
-    dispatch(clearErrors());
-    resetForm();
-  };
-
   useEffect(() => {
-    // Clear errors when component mounts or tab changes
-    dispatch(clearErrors());
-
-    // Handle successful authentication
-    if (isAuthenticated) {
-      const redirect = location.state?.from || '/';
-      navigate(redirect);
-    }
-
-    // Clear success message after 5 seconds
-    if (successMessage) {
-      const timer = setTimeout(() => {
-        setSuccessMessage('');
+    if (error) {
+      setTimeout(() => {
+        dispatch(clearErrors());
       }, 5000);
-      return () => clearTimeout(timer);
     }
-  }, [dispatch, isAuthenticated, navigate, location.state, successMessage]);
+
+    if (isAuthenticated) {
+      navigate('/');
+    }
+  }, [dispatch, error, isAuthenticated, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-lg">
         <div className="flex mb-6">
           <button
-            onClick={() => handleTabChange('login')}
+            type="button"
+            onClick={() => setActiveTab('login')}
             className={`w-1/2 py-2 text-center ${
-              activeTab === 'login' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-600'
+              activeTab === 'login'
+                ? 'bg-blue-500 text-white'
+                : 'bg-gray-100 text-gray-600'
             } rounded-l-lg transition-colors`}
           >
             LOGIN
           </button>
           <button
-            onClick={() => handleTabChange('register')}
+            type="button"
+            onClick={() => setActiveTab('register')}
             className={`w-1/2 py-2 text-center ${
-              activeTab === 'register' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-600'
+              activeTab === 'register'
+                ? 'bg-blue-500 text-white'
+                : 'bg-gray-100 text-gray-600'
             } rounded-r-lg transition-colors`}
           >
             REGISTER
           </button>
         </div>
-
-        {successMessage && (
-          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
-            {successMessage}
-          </div>
-        )}
 
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
@@ -419,16 +377,19 @@ const LoginAndSignUp = () => {
               />
             </div>
 
-            <Link to="/password/forgot" className="text-blue-500 hover:text-blue-700 text-sm">
+            <Link
+              to="/password/forgot"
+              className="block text-blue-500 hover:text-blue-700 text-sm"
+            >
               Forgot Password?
             </Link>
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={isSubmitting || loading}
               className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
             >
-              {loading ? 'Logging in...' : 'Login'}
+              {(isSubmitting || loading) ? 'Logging in...' : 'Login'}
             </button>
           </form>
         ) : (
@@ -437,7 +398,7 @@ const LoginAndSignUp = () => {
             encType="multipart/form-data"
             className="space-y-6"
           >
-            {/* Register form fields */}
+            {/* Register form fields remain the same */}
             <div>
               <input
                 type="text"
@@ -491,10 +452,10 @@ const LoginAndSignUp = () => {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={isSubmitting || loading}
               className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
             >
-              {loading ? 'Registering...' : 'Register'}
+              {(isSubmitting || loading) ? 'Registering...' : 'Register'}
             </button>
           </form>
         )}
