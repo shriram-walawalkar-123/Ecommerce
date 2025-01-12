@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { clearErrors, createOrder } from '../../actions/orderAction';
 import axios from "axios";
 import { CreditCard, Calendar, Lock } from "lucide-react";
+import { baseURL } from '../../config/config';
 
 const Payment = () => {
   const orderInfo = JSON.parse(sessionStorage.getItem("orderInfo"));
@@ -57,7 +58,7 @@ const Payment = () => {
       };
 
       const { data } = await axios.post(
-        "/api/v1/payment/process",
+        `${baseURL}/api/v1/payment/process`,
         paymentData,
         config
       );
