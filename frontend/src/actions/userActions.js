@@ -1,5 +1,6 @@
 import axios from "axios";
 import { LOGIN_FAIL,LOGIN_REQUEST,LOGIN_SUCCESS,CLEAR_ERRORS, REGISTER_USER_SUCCESS, REGISTER_USER_FAIL,LOAD_USER_FAIL,LOAD_USER_REQUEST,LOAD_USER_SUCCESS,LOGOUT_USER_FAIL,LOGOUT_USER_SUCCESS,UPDATE_PROFILE_FAIL,UPDATE_PROFILE_REQUEST,UPDATE_PROFILE_SUCCESS, UPDATE_PASSWORD_REQUEST, UPDATE_PASSWORD_FAIL, FORGOT_PASSWORD_REQUEST, FORGOT_PASSWORD_SUCCESS, FORGOT_PASSWORD_FAIL, RESET_PASSWORD_REQUEST, RESET_PASSWORD_SUCCESS, RESET_PASSWORD_FAIL, ALL_USERS_REQUEST, ALL_USERS_SUCCESS, ALL_USERS_FAIL, DELETE_USER_FAIL, DELETE_USER_REQUEST, DELETE_USER_SUCCESS, USER_DETAILS_REQUEST, USER_DETAILS_SUCCESS, USER_DETAILS_FAIL, UPDATE_USER_REQUEST, UPDATE_USER_SUCCESS, UPDATE_USER_FAIL } from "../constants/userConstants";
+import { baseURL } from "../config/config";
 
 export const login = (email,password) => async(dispatch) =>{
     try{
@@ -7,7 +8,7 @@ export const login = (email,password) => async(dispatch) =>{
             type:LOGIN_REQUEST
         })
         const config = {headers:{"Content-Type":"application/json"}}
-        const {data} = await axios.post(`/api/v1/login`,{email,password},config);
+        const {data} = await axios.post(`${baseURL}/api/v1/login`,{email,password},config);
 
         dispatch({
             type:LOGIN_SUCCESS,
