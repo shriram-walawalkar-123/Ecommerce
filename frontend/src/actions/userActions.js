@@ -1,5 +1,5 @@
 import axios from "axios";
-import { LOGIN_FAIL,LOGIN_REQUEST,LOGIN_SUCCESS,CLEAR_ERRORS, REGISTER_USER_SUCCESS, REGISTER_USER_FAIL,LOAD_USER_FAIL,LOAD_USER_REQUEST,LOAD_USER_SUCCESS,LOGOUT_USER_FAIL,LOGOUT_USER_SUCCESS,UPDATE_PROFILE_FAIL,UPDATE_PROFILE_REQUEST,UPDATE_PROFILE_SUCCESS, UPDATE_PASSWORD_REQUEST, UPDATE_PASSWORD_FAIL, FORGOT_PASSWORD_REQUEST, FORGOT_PASSWORD_SUCCESS, FORGOT_PASSWORD_FAIL, RESET_PASSWORD_REQUEST, RESET_PASSWORD_SUCCESS, RESET_PASSWORD_FAIL, ALL_USERS_REQUEST, ALL_USERS_SUCCESS, ALL_USERS_FAIL, DELETE_USER_FAIL, DELETE_USER_REQUEST, DELETE_USER_SUCCESS, USER_DETAILS_REQUEST, USER_DETAILS_SUCCESS, USER_DETAILS_FAIL, UPDATE_USER_REQUEST, UPDATE_USER_SUCCESS, UPDATE_USER_FAIL } from "../constants/userConstants";
+import { LOGIN_FAIL,LOGIN_REQUEST,LOGIN_SUCCESS,CLEAR_ERRORS, REGISTER_USER_SUCCESS, REGISTER_USER_FAIL,LOAD_USER_FAIL,LOAD_USER_SUCCESS,LOGOUT_USER_FAIL,LOGOUT_USER_SUCCESS,UPDATE_PROFILE_FAIL,UPDATE_PROFILE_REQUEST,UPDATE_PROFILE_SUCCESS, UPDATE_PASSWORD_REQUEST, UPDATE_PASSWORD_FAIL, FORGOT_PASSWORD_REQUEST, FORGOT_PASSWORD_SUCCESS, FORGOT_PASSWORD_FAIL, RESET_PASSWORD_REQUEST, RESET_PASSWORD_SUCCESS, RESET_PASSWORD_FAIL, ALL_USERS_REQUEST, ALL_USERS_SUCCESS, ALL_USERS_FAIL, DELETE_USER_FAIL, DELETE_USER_REQUEST, DELETE_USER_SUCCESS, USER_DETAILS_REQUEST, USER_DETAILS_SUCCESS, USER_DETAILS_FAIL, UPDATE_USER_REQUEST, UPDATE_USER_SUCCESS, UPDATE_USER_FAIL, LOAD_USER_REQUEST } from "../constants/userConstants";
 import { baseURL } from "../config/config";
 
 export const login = (email,password) => async(dispatch) =>{
@@ -7,8 +7,19 @@ export const login = (email,password) => async(dispatch) =>{
         dispatch({
             type:LOGIN_REQUEST
         })
-        const config = {headers:{"Content-Type":"application/json"}}
+
+        const config = {
+          headers:{
+          "Content-Type":"application/json",         
+        },
+        withCredentials: true
+      }
+
         const {data} = await axios.post(`${baseURL}/api/v1/login`,{email,password},config);
+
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+        }
 
         dispatch({
             type:LOGIN_SUCCESS,
@@ -28,9 +39,14 @@ export const register = (formData) => async (dispatch) => {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
+      withCredentials: true
     };
 
     const { data } = await axios.post(`${baseURL}/api/v1/register`, formData, config);
+
+    if (data.token) {
+      localStorage.setItem('token', data.token);
+    }
 
     dispatch({
       type: REGISTER_USER_SUCCESS,
@@ -47,11 +63,18 @@ export const register = (formData) => async (dispatch) => {
 
 export const loadUser = () => async(dispatch) =>{
   try{
-      dispatch({
-          type:LOAD_USER_REQUEST
-      })
-      
-      const { data } = await axios.get(`${baseURL}/api/v1/me`);
+    dispatch({
+      type:LOAD_USER_REQUEST
+    })
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: true  // Add this
+    };
+
+    const { data } = await axios.get(`${baseURL}/api/v1/me`, config);
 
       dispatch({
           type:LOAD_USER_SUCCESS,
@@ -65,19 +88,22 @@ export const loadUser = () => async(dispatch) =>{
   }
 }
 
+export const logOut = () => async(dispatch) => {
+  try {
+    const config = {
+      withCredentials: true  // Add this
+    };
+    
+    await axios.get(`${baseURL}/api/v1/logout`,config);
 
-export const logOut = () => async(dispatch) =>{
-  try{
-      await axios.get(`${baseURL}/api/v1/logout`);
-
-      dispatch({
-          type:LOGOUT_USER_SUCCESS,
-      })
-  }catch(error){
-      dispatch({
-          type:LOGOUT_USER_FAIL,
-          payload:error.response.data.message
-      })
+    dispatch({
+      type: LOGOUT_USER_SUCCESS
+    });
+  } catch(error) {
+    dispatch({
+      type: LOGOUT_USER_FAIL,
+      payload: error.response?.data?.message || 'Logout failed'
+    });
   }
 }
 
@@ -86,10 +112,13 @@ export const updateProfile = (userData) => async (dispatch) => {
   try {
     dispatch({ type: UPDATE_PROFILE_REQUEST });
 
+    
+
     const config = {
       headers: {
         'Content-Type': 'multipart/form-data'
-      }
+      },
+      withCredentials:true
     };
 
     const { data } = await axios.put(`${baseURL}/api/v1/me/update`, userData, config);
@@ -117,7 +146,8 @@ export const updatePassword = (passwords) => async (dispatch) => {
     const config = {
       headers: {
         'Content-Type': 'application/json'
-      }
+      },
+      withCredentials:true
     };
 
     const { data } = await axios.put(`${baseURL}/api/v1/password/update`, passwords, config);
@@ -144,7 +174,7 @@ export const forgotPassword = (email) => async(dispatch) =>{
           type:FORGOT_PASSWORD_REQUEST
       })
 
-      const config = {headers:{"Content-Type":"application/json"}}
+      const config = {headers:{"Content-Type":"application/json"},withCredentials:true}
 
       const {data} = await axios.post(`${baseURL}/api/v1/password/forgot`,email,config);
 
@@ -167,7 +197,7 @@ export const resetPassword = (token,passwords) => async(dispatch) =>{
           type:RESET_PASSWORD_REQUEST
       })
 
-      const config = {headers:{"Content-Type":"application/json"}}
+      const config = {headers:{"Content-Type":"application/json"},withCredentials:true}
 
       const {data} = await axios.put(`${baseURL}/api/v1/password/reset/${token}`,passwords,config);
 
@@ -187,7 +217,15 @@ export const getAllUsers = () => async(dispatch) => {
    try{
    dispatch({type:ALL_USERS_REQUEST})
 
-   const {data} = await axios.get(`${baseURL}/api/v1/admin/users`);
+   //added
+   const config = {
+    headers:{
+        "Content-Type" : "application/json"
+    },
+    withCredentials: true 
+   }
+
+   const {data} = await axios.get(`${baseURL}/api/v1/admin/users`,config);
 
    dispatch({
     type:ALL_USERS_SUCCESS,
@@ -202,7 +240,15 @@ export const deleteUser = (id) => async(dispatch) => {
   try{
     dispatch({type:DELETE_USER_REQUEST})
 
-    const {data} = await axios.delete(`${baseURL}/api/v1/admin/user/${id}`)
+    //added
+    const config = {
+      headers:{
+          "Content-Type" : "application/json"
+      },
+      withCredentials: true 
+  }
+
+    const {data} = await axios.delete(`${baseURL}/api/v1/admin/user/${id}`,config)
 
     dispatch({
       type:DELETE_USER_SUCCESS,
@@ -219,7 +265,16 @@ export const deleteUser = (id) => async(dispatch) => {
 export const getUserDetails = (id) => async (dispatch) => {
   try {
     dispatch({ type: USER_DETAILS_REQUEST });
-    const { data } = await axios.get(`${baseURL}/api/v1/admin/user/${id}`);
+
+    //added
+    const config = {
+      headers:{
+          "Content-Type" : "application/json"
+      },
+      withCredentials: true 
+  }
+
+    const { data } = await axios.get(`${baseURL}/api/v1/admin/user/${id}`,config);
 
     dispatch({ 
       type: USER_DETAILS_SUCCESS, 
@@ -238,7 +293,8 @@ export const updateUser = (id, userData) => async (dispatch) => {
     dispatch({ type: UPDATE_USER_REQUEST });
 
     const config = { 
-      headers: { "Content-Type": "application/json" } 
+      headers: { "Content-Type": "application/json" },
+      withCredentials:true 
     };
 
     const { data } = await axios.put(`${baseURL}/api/v1/admin/user/${id}`,userData,config);

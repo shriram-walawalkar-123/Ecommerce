@@ -141,7 +141,11 @@ exports.resetPassword = catchAsyncError(async(req,res,next)=>{
 
 //get user details not admin
 exports.getUserDetails = catchAsyncError(async(req,res,next)=>{
+    console.log("enter to userDetaisls");
+
     const user = await User.findById(req.user.id);
+    
+    console.log("user is :",user);
 
     res.status(200).json({
         success:true,

@@ -11,7 +11,8 @@ export const createOrder = (order) => async(dispatch) => {
     const config = {
         headers:{
             "Content-Type" : "application/json"
-        }
+        },
+        withCredentials:true
     }
     
     const {data} = await axios.post(`${baseURL}/api/v1/order/new`,order,config);
@@ -29,26 +30,32 @@ export const createOrder = (order) => async(dispatch) => {
     }
 }
 
-export const myOrders = () => async(dispatch) => {
-    try{
-        dispatch({
-            type:MY_ORDERS_REQUEST
-        })
 
-    const {data} = await axios.get(`${baseURL}/api/v1/orders/me`);
-
-    dispatch({
-        type:MY_ORDERS_SUCCESS,
-        payload:data.orders
-    })
-
-    }catch(error){
-        dispatch({
-            type:MY_ORDERS_FAIL,
-            payload:error.response.data.message
-        })
+export const myOrders = () => async (dispatch) => {
+    try {
+      dispatch({ type: MY_ORDERS_REQUEST });
+  
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true
+      };
+  
+      const { data } = await axios.get(`${baseURL}/api/v1/orders/me`, config);
+  
+      dispatch({
+        type: MY_ORDERS_SUCCESS,
+        payload: data.orders,
+      });
+    } catch (error) {
+      dispatch({
+        type: MY_ORDERS_FAIL,
+        payload: error.response?.data?.message || "Failed to fetch orders",
+      });
     }
-}
+  };
+  
 
 export const getOrderDetails = (id) => async(dispatch) => {
     try{
@@ -56,7 +63,15 @@ export const getOrderDetails = (id) => async(dispatch) => {
             type:ORDER_DETAILS_REQUEST
         })
 
-    const {data} = await axios.get(`${baseURL}/api/v1/order/${id}`);
+        //added
+        const config = {
+            headers:{
+                "Content-Type" : "application/json"
+            },
+            withCredentials: true 
+        }
+
+    const {data} = await axios.get(`${baseURL}/api/v1/order/${id}`,config);
 
     dispatch({
         type:ORDER_DETAILS_SUCCESS,
@@ -77,7 +92,15 @@ export const getAllOrders = () => async(dispatch) => {
             type:ALL_ORDERS_REQUEST
         })
 
-    const {data} = await axios.get(`${baseURL}/api/v1/admin/orders`);
+        //added
+        const config = {
+            headers:{
+                "Content-Type" : "application/json"
+            },
+            withCredentials: true 
+        }
+
+    const {data} = await axios.get(`${baseURL}/api/v1/admin/orders`,config);
 
     dispatch({
         type:ALL_ORDERS_SUCCESS,
@@ -100,6 +123,7 @@ export const updateOrder = (id, order) => async (dispatch) => {
         headers: {
           "Content-Type": "application/json",
         },
+        withCredentials:true
       };
 
       const { data } = await axios.put(
@@ -125,7 +149,15 @@ export const deleteOrder = (id) => async(dispatch) => {
     try {
         dispatch({ type: DELETE_ORDERS_REQUEST });
 
-        const { data } = await axios.delete(`${baseURL}/api/v1/admin/order/${id}`);
+        //added
+        const config = {
+            headers:{
+                "Content-Type" : "application/json"
+            },
+            withCredentials: true 
+        }
+
+        const { data } = await axios.delete(`${baseURL}/api/v1/admin/order/${id}`,config);
 
         dispatch({
             type: DELETE_ORDERS_SUCCESS,

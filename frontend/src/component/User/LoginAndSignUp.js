@@ -75,7 +75,9 @@ const LoginAndSignUp = () => {
     if (message) {
       setSuccessMessage(message);
     }
+
     if (isAuthenticated) {
+      console.log("user is authenticated");
       navigate('/'); 
     }
   }, [dispatch, isAuthenticated, message,navigate]);

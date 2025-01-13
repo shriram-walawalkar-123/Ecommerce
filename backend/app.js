@@ -21,7 +21,13 @@ const dotenv = require('dotenv');
 // }));
 
 app.use(cors({
-  origin: '*', // Allow access from any origin
+  origin: [
+    'https://shrifrontend.vercel.app/',
+    'https://shrifrontend-git-main-shriram-mangesh-walawalkars-projects.vercel.app/',
+    'https://shrifrontend-ppx1bfo1e-shriram-mangesh-walawalkars-projects.vercel.app/',
+    'http://localhost:3000'
+  ],
+  // origin: '*', // Allow access from any origin
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], // Allowed HTTP methods
   credentials: true, // Include credentials like cookies or headers
   allowedHeaders: ['Content-Type', 'Authorization', 'Access-Control-Allow-Credentials'] // Allowed custom headers
