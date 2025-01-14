@@ -26,9 +26,9 @@ const dotenv = require('dotenv');
 // Backend cors configuration
 app.use(cors({
   origin: [
-    'https://shrifrontend.vercel.app',
-    'https://shrifrontend-git-main-shriram-mangesh-walawalkars-projects.vercel.app',
-    'https://shrifrontend-ppx1bfo1e-shriram-mangesh-walawalkars-projects.vercel.app',
+    'https://shrifrontend.vercel.app/',
+    'https://shrifrontend-git-main-shriram-mangesh-walawalkars-projects.vercel.app/',
+    'https://shrifrontend-ppx1bfo1e-shriram-mangesh-walawalkars-projects.vercel.app/',
     'http://localhost:3000'
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
