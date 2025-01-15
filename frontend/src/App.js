@@ -40,77 +40,8 @@ import ProductReviews from './component/Admin/ProductReviews';
 import { baseURL } from './config/config';
 
 const App = () => {
-  // const { user, isAuthenticated } = useSelector(state => state.user);
-  // const [stripeApiKey, setStripeApiKey] = useState("");
-  // const [loading, setLoading] = useState(true);
-  
-  // useEffect(() => {
-  //   let isComponentMounted = true;
-  
-  //   const initializeUser = async () => {
-  //     try {
-  //       if (!isAuthenticated) {  // Only load user if not already authenticated
-  //         await store.dispatch(loadUser());
-  //       }
-  //     } catch (error) {
-  //       console.error("Error loading user:", error);
-  //     }
-  //   };
-  
-  //   const fetchStripeApiKey = async () => {
-  //     if (!stripeApiKey) {  // Only fetch if we don't have the key
-  //       try {
-  //         const config = {
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //           },
-  //           withCredentials: true  
-  //         };
-  
-  //         const { data } = await axios.get(
-  //           `${baseURL}/api/v1/stripeapikey`,
-  //           config
-  //         );
-          
-  //         if (isComponentMounted) {
-  //           setStripeApiKey(data.stripeApiKey);
-  //         }
-  //       } catch (error) {
-  //         console.error("Error fetching Stripe API Key:", error);
-  //       }
-  //     }
-  //   };
-  
-  //   const initialize = async () => {
-  //     try {
-  //       await initializeUser();
-  //       if (isAuthenticated) {
-  //         await fetchStripeApiKey();
-  //       }
-  //     } catch (error) {
-  //       console.error("Initialization error:", error);
-  //     } finally {
-  //       if (isComponentMounted) {
-  //         setLoading(false);
-  //       }
-  //     }
-  //   };
-  
-  //   initialize();
-  
-  //   return () => {
-  //     isComponentMounted = false;
-  //   };
-  // }, [isAuthenticated, stripeApiKey]); // Added dependencies properly
 
 
-  // const stripePromise = stripeApiKey ? loadStripe(stripeApiKey) : null;
-
-  // if (loading) {
-  //   return <div>Loading...</div>;
-  // }
-
-  // const { user, isAuthenticated } = useSelector(state => state.user); const [stripeApiKey, setStripeApiKey] = useState(""); useEffect(() => { let isComponentMounted = true; const initialize = async () => { try { if(!isAuthenticated){await store.dispatch(loadUser());} if (isAuthenticated && !stripeApiKey) { const config = { headers: { "Content-Type": "application/json", }, withCredentials: true }; const { data } = await axios.get( `${baseURL}/api/v1/stripeapikey`, config ); if (isComponentMounted) { setStripeApiKey(data.stripeApiKey); } } } catch (error) { console.error("Initialization error:", error); } }; initialize(); return () => { isComponentMounted = false}; }, [isAuthenticated, stripeApiKey]);
 
   const { user, isAuthenticated } = useSelector(state => state.user);
   const [stripeApiKey, setStripeApiKey] = useState("");
@@ -120,40 +51,47 @@ const App = () => {
     let isComponentMounted = true;
 
     const initialize = async () => {
-      try {
-        // Check if there's a stored token/session before loading user
-        const token = localStorage.getItem('token'); // Or however you store your auth token
-        
-        if (token && !isAuthenticated) {
-          await store.dispatch(loadUser());
-        }
+        try {
+            const token = localStorage.getItem('token');
+            
+            if (token) {
+                // Set token in axios defaults
+                axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            }
 
-        // Only fetch stripe key if authenticated
-        if (isAuthenticated && !stripeApiKey) {
-          const config = {
-            headers: { "Content-Type": "application/json" },
-            withCredentials: true
-          };
-          const { data } = await axios.get(`${baseURL}/api/v1/stripeapikey`, config);
-          if (isComponentMounted) {
-            setStripeApiKey(data.stripeApiKey);
-          }
+            if (token && !isAuthenticated) {
+                await store.dispatch(loadUser());
+            }
+
+            if (isAuthenticated && !stripeApiKey) {
+                const config = {
+                    headers: { "Content-Type": "application/json" },
+                    withCredentials: true,
+                    credentials: 'include'
+                };
+                const { data } = await axios.get(`${baseURL}/api/v1/stripeapikey`, config);
+                if (isComponentMounted) {
+                    setStripeApiKey(data.stripeApiKey);
+                }
+            }
+        } catch (error) {
+            console.error("Initialization error:", error);
+            // Clear invalid token if authentication fails
+            localStorage.removeItem('token');
+            delete axios.defaults.headers.common['Authorization'];
+        } finally {
+            if (isComponentMounted) {
+                setIsLoading(false);
+            }
         }
-      } catch (error) {
-        console.error("Initialization error:", error);
-      } finally {
-        if (isComponentMounted) {
-          setIsLoading(false);
-        }
-      }
     };
 
     initialize();
 
     return () => {
-      isComponentMounted = false;
+        isComponentMounted = false;
     };
-  }, [isAuthenticated, stripeApiKey]);
+}, [isAuthenticated, stripeApiKey]);
 
   if (isLoading) {
     return <div>Loading...</div>;

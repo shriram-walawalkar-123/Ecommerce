@@ -8,53 +8,12 @@ const fileUpload = require('express-fileupload');
 const dotenv = require('dotenv');
 
 // Middleware
-
-// app.use(cors({
-//   origin: [
-//     'https://shrifrontend.vercel.app/',
-//     'https://shrifrontend-git-main-shriram-mangesh-walawalkars-projects.vercel.app/',
-//     'https://shrifrontend-ppx1bfo1e-shriram-mangesh-walawalkars-projects.vercel.app/',
-//     'http://localhost:3000'
-//   ],
-//   // origin: '*', // Allow access from any origin
-//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], // Allowed HTTP methods
-//   credentials: true, // Include credentials like cookies or headers
-//   allowedHeaders: ['Content-Type', 'Authorization', 'Access-Control-Allow-Credentials'] // Allowed custom headers
-// }));
-
-
-// Backend cors configuration
 app.use(cors({
-  origin: [
-    'https://shrifrontend.vercel.app/',
-    'https://shrifrontend-git-main-shriram-mangesh-walawalkars-projects.vercel.app/',
-    'https://shrifrontend-ppx1bfo1e-shriram-mangesh-walawalkars-projects.vercel.app/',
-    'http://localhost:3000'
-  ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  origin: process.env.FRONTEND_URL || "http://localhost:3000",
   credentials: true,
-  allowedHeaders: [
-    'Content-Type', 
-    'Authorization', 
-    'Access-Control-Allow-Credentials',
-    'Access-Control-Allow-Origin'
-  ]
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
-
-// Add these headers explicitly
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (origin && origin.includes('shrifrontend.vercel.app')) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  }
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Access-Control-Allow-Credentials');
-  next();
-});
-
-// Handle OPTIONS preflight requests
-app.options('*', cors());
 
 // app.use(express.json());
 app.use(cookieParser());

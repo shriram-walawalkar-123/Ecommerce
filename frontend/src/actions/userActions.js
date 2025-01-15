@@ -12,13 +12,18 @@ export const login = (email,password) => async(dispatch) =>{
           headers:{
           "Content-Type":"application/json",         
         },
-        withCredentials: true
+        withCredentials: true,
+        credentials: 'include' 
       }
+
+
 
         const {data} = await axios.post(`${baseURL}/api/v1/login`,{email,password},config);
 
+       // Store token in localStorage and in axios defaults
         if (data.token) {
-          localStorage.setItem('token', data.token);
+            localStorage.setItem('token', data.token);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
         }
 
         dispatch({
