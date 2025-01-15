@@ -8,12 +8,39 @@ const fileUpload = require('express-fileupload');
 const dotenv = require('dotenv');
 
 // Middleware
+// In your backend app.js or server.js
+const allowedOrigins = [
+  'https://shrifrontend.vercel.app',  // Your Vercel frontend
+  'http://localhost:3000'             // Local development
+];
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "http://localhost:3000",
+  origin: function(origin, callback) {
+    // For development/testing - allow requests with no origin 
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) === -1) {
+      console.log('Blocked origin:', origin); // For debugging
+      return callback(new Error('Not allowed by CORS'), false);
+    }
+    return callback(null, true);
+  },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],  // Added OPTIONS
+  allowedHeaders: [
+    'Content-Type', 
+    'Authorization', 
+    'X-Requested-With',
+    'Accept',
+    'Origin'
+  ],
+  exposedHeaders: ['Set-Cookie'],
+  preflightContinue: true,
+  optionsSuccessStatus: 204
 }));
+
+// Add this before your routes
+app.options('*', cors()); // Enable pre-flight for all routes
 
 // app.use(express.json());
 app.use(cookieParser());
