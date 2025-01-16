@@ -8,12 +8,12 @@ export const createOrder = (order) => async(dispatch) => {
             type:CREATE_ORDER_REQUEST
         })
 
-    const config = {
-        headers:{
-            "Content-Type" : "application/json"
-        },
-        withCredentials:true
-    }
+        const token = localStorage.getItem('token');
+        const config = {
+        headers: {
+        'Authorization': `Bearer ${token}`
+        }
+        };
     
     const {data} = await axios.post(`${baseURL}/api/v1/order/new`,order,config);
 
@@ -35,11 +35,11 @@ export const myOrders = () => async (dispatch) => {
     try {
       dispatch({ type: MY_ORDERS_REQUEST });
   
+      const token = localStorage.getItem('token');
       const config = {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true
+      headers: {
+      'Authorization': `Bearer ${token}`
+      }
       };
   
       const { data } = await axios.get(`${baseURL}/api/v1/orders/me`, config);
@@ -63,13 +63,12 @@ export const getOrderDetails = (id) => async(dispatch) => {
             type:ORDER_DETAILS_REQUEST
         })
 
-        //added
+        const token = localStorage.getItem('token');
         const config = {
-            headers:{
-                "Content-Type" : "application/json"
-            },
-            withCredentials: true 
+        headers: {
+        'Authorization': `Bearer ${token}`
         }
+        };
 
     const {data} = await axios.get(`${baseURL}/api/v1/order/${id}`,config);
 
@@ -92,13 +91,12 @@ export const getAllOrders = () => async(dispatch) => {
             type:ALL_ORDERS_REQUEST
         })
 
-        //added
+        const token = localStorage.getItem('token');
         const config = {
-            headers:{
-                "Content-Type" : "application/json"
-            },
-            withCredentials: true 
+        headers: {
+        'Authorization': `Bearer ${token}`
         }
+        };
 
     const {data} = await axios.get(`${baseURL}/api/v1/admin/orders`,config);
 
@@ -119,11 +117,11 @@ export const updateOrder = (id, order) => async (dispatch) => {
     try {
       dispatch({ type: UPDATE_ORDERS_REQUEST });
   
+      const token = localStorage.getItem('token');
       const config = {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials:true
+      headers: {
+      'Authorization': `Bearer ${token}`
+      }
       };
 
       const { data } = await axios.put(
@@ -149,13 +147,12 @@ export const deleteOrder = (id) => async(dispatch) => {
     try {
         dispatch({ type: DELETE_ORDERS_REQUEST });
 
-        //added
+        const token = localStorage.getItem('token');
         const config = {
-            headers:{
-                "Content-Type" : "application/json"
-            },
-            withCredentials: true 
+        headers: {
+        'Authorization': `Bearer ${token}`
         }
+        };
 
         const { data } = await axios.delete(`${baseURL}/api/v1/admin/order/${id}`,config);
 

@@ -51,11 +51,11 @@ const Payment = () => {
     try {
       payBtn.current.disabled = true;
 
+      const token = localStorage.getItem('token');
       const config = {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true  // Add this
+      headers: {
+      'Authorization': `Bearer ${token}`
+      }
       };
 
       const { data } = await axios.post(

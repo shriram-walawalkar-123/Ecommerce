@@ -11,7 +11,7 @@ const dotenv = require('dotenv');
 // In your backend app.js or server.js
 const allowedOrigins = [
   'https://shrifrontend.vercel.app',  // Your Vercel frontend
-  'http://localhost:3000'             // Local development
+  'http://localhost:3000' 
 ];
 
 app.use(cors({
@@ -40,7 +40,7 @@ app.use(cors({
 }));
 
 // Add this before your routes
-app.options('*', cors()); // Enable pre-flight for all routes
+// app.options('*', cors()); // Enable pre-flight for all routes
 
 // app.use(express.json());
 app.use(cookieParser());

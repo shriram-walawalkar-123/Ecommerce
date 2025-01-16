@@ -5,19 +5,19 @@ import { baseURL } from "../config/config";
 export const getProduct = (keyword = "",page = 1,price=[0,25000],category,ratings=0) => async (dispatch) => {
     try {
         dispatch({ type: ALL_PRODUCT_REQUEST });
-        //added
-        const config = {
-            headers:{
-                "Content-Type" : "application/json"
-            },
-            withCredentials: true 
-        }
 
         let link = `${baseURL}/api/v1/product?keyword=${keyword}&page=${page}&price[gte]=${price[0]}&price[lte]=${price[1]}&ratings[gte]=${ratings}`;
         
         if(category){
             link =`${baseURL}/api/v1/product?keyword=${keyword}&page=${page}&price[gte]=${price[0]}&price[lte]=${price[1]}&category=${category}&ratings[gte]=${ratings}`;
         }
+
+        const token = localStorage.getItem('token');
+        const config = {
+        headers: {
+        'Authorization': `Bearer ${token}`
+        }
+        };
 
         const { data } = await axios.get(`${link}`,config);
 
@@ -36,13 +36,13 @@ export const getProduct = (keyword = "",page = 1,price=[0,25000],category,rating
 export const getProductDetails = (id) => async(dispatch) => {
     try {
         dispatch({ type: PRODUCT_DETAILS_REQUEST });
-        //added
+
+        const token = localStorage.getItem('token');
         const config = {
-            headers:{
-                "Content-Type" : "application/json"
-            },
-            withCredentials: true 
+        headers: {
+        'Authorization': `Bearer ${token}`
         }
+        };
 
         const { data } = await axios.get(`${baseURL}/api/v1/product/${id}`,config);
 
@@ -63,12 +63,12 @@ export const newReview = (reviewData) => async(dispatch) => {
     try {
         dispatch({ type: NEW_REVIEW_REQUEST });
 
+        const token = localStorage.getItem('token');
         const config = {
-            headers:{
-                "Content-Type" : "application/json"
-            },
-            withCredentials: true 
+        headers: {
+        'Authorization': `Bearer ${token}`
         }
+        };
 
         const { data } = await axios.put(`${baseURL}/api/v1/review`,reviewData,config);
 
@@ -88,13 +88,13 @@ export const newReview = (reviewData) => async(dispatch) => {
 export const getAdminProduct = () => async(dispatch) => {
     try {
         dispatch({ type: ADMIN_PRODUCT_REQUEST });
-        //added
+
+        const token = localStorage.getItem('token');
         const config = {
-            headers:{
-                "Content-Type" : "application/json"
-            },
-            withCredentials: true 
+        headers: {
+        'Authorization': `Bearer ${token}`
         }
+        };
 
         const { data } = await axios.get(`${baseURL}/api/v1/admin/products`,config);
 
@@ -115,12 +115,12 @@ export const createProduct = (productData) => async(dispatch) => {
     try {
         dispatch({ type: NEW_PRODUCT_REQUEST });
 
+        const token = localStorage.getItem('token');
         const config = {
-            headers: { 
-              "Content-Type": "multipart/form-data"  // Important for file upload
-            },
-            withCredentials:true
-          };
+        headers: {
+        'Authorization': `Bearer ${token}`
+        }
+        };
 
         const { data } = await axios.post(`${baseURL}/api/v1/admin/product/new`,productData,config);
 
@@ -140,13 +140,13 @@ export const createProduct = (productData) => async(dispatch) => {
 export const deleteProduct = (id) => async(dispatch) => {
     try {
         dispatch({ type: DELETE_PRODUCT_REQUEST });
-        //added
+
+        const token = localStorage.getItem('token');
         const config = {
-            headers:{
-                "Content-Type" : "application/json"
-            },
-            withCredentials: true 
+        headers: {
+        'Authorization': `Bearer ${token}`
         }
+        };
 
         const { data } = await axios.delete(`${baseURL}/api/v1/admin/product/${id}`,config);
 
@@ -167,19 +167,14 @@ export const getAdminProductDetails = (id) => async(dispatch) => {
     try {
         dispatch({ type: PRODUCT_DETAILS_REQUEST });
         
-        // Log the API call
-        // console.log('Fetching product:', `${baseURL}/api/v1/admin/product/${id}`);
-        
-        //added
+        const token = localStorage.getItem('token');
         const config = {
-            headers:{
-                "Content-Type" : "application/json"
-            },
-            withCredentials: true 
+        headers: {
+        'Authorization': `Bearer ${token}`
         }
+        };
 
         const { data } = await axios.get(`${baseURL}/api/v1/admin/product/${id}`,config);
-        // console.log('Response:', data);
 
         dispatch({
             type: PRODUCT_DETAILS_SUCCESS,
@@ -198,13 +193,12 @@ export const editProduct = (id, productData) => async(dispatch) => {
     try {
         dispatch({ type: UPDATE_PRODUCT_REQUEST });
         
-        //added
+        const token = localStorage.getItem('token');
         const config = {
-            headers:{
-                "Content-Type" : "application/json"
-            },
-            withCredentials: true 
+        headers: {
+        'Authorization': `Bearer ${token}`
         }
+        };
         
         const { data } = await axios.put(`${baseURL}/api/v1/admin/product/${id}`, productData,config);
 
@@ -225,13 +219,12 @@ export const getAllReviews = (id) => async (dispatch) => {
     try {
       dispatch({ type: ALL_REVIEW_REQUEST });
       
-      //added
+      const token = localStorage.getItem('token');
       const config = {
-        headers:{
-            "Content-Type" : "application/json"
-        },
-        withCredentials: true 
-    }
+      headers: {
+      'Authorization': `Bearer ${token}`
+      }
+      };
   
       const { data } = await axios.get(`${baseURL}/api/v1/reviews?id=${id}`,config);
   
@@ -251,13 +244,12 @@ export const deleteReviews = (reviewId, productId) => async (dispatch) => {
     try {
       dispatch({ type: DELETE_REVIEW_REQUEST });
 
-      //added
+      const token = localStorage.getItem('token');
       const config = {
-        headers:{
-            "Content-Type" : "application/json"
-        },
-        withCredentials: true 
-    }
+      headers: {
+      'Authorization': `Bearer ${token}`
+      }
+      };
   
       const { data } = await axios.delete(
         `${baseURL}/api/v1/reviews?id=${reviewId}&productId=${productId}`,config
