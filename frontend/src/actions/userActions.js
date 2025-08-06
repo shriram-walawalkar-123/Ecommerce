@@ -15,11 +15,9 @@ export const login = (email,password) => async(dispatch) =>{
       }
 
         const {data} = await axios.post(`${baseURL}/api/v1/login`,{email,password},config);
-        console.log("data of login  " , data.token);
 
        // Store token in localStorage and in axios defaults
         if (data.token) {
-             console.log(" Storing The Token on LocalStorage  ",data.token);
              localStorage.setItem('token', data.token);
             axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
         }

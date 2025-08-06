@@ -40,9 +40,6 @@ import ProductReviews from './component/Admin/ProductReviews';
 import { baseURL } from './config/config';
 
 const App = () => {
-
-
-
   const { user, isAuthenticated } = useSelector(state => state.user);
   const [stripeApiKey, setStripeApiKey] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -55,7 +52,6 @@ const App = () => {
             const token = localStorage.getItem('token');
             
             if (token) {
-                // Set token in axios defaults
                 axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             }
 
@@ -76,7 +72,6 @@ const App = () => {
             }
         } catch (error) {
             console.error("Initialization error:", error);
-            // Clear invalid token if authentication fails
             localStorage.removeItem('token');
             delete axios.defaults.headers.common['Authorization'];
         } finally {

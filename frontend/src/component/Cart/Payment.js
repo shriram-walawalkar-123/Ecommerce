@@ -64,6 +64,8 @@ const Payment = () => {
         config
       );
 
+      // console.log("payment data is :",data);
+
       const client_secret = data.client_secret;
 
       const result = await stripe.confirmCardPayment(client_secret, {
@@ -82,6 +84,8 @@ const Payment = () => {
           },
         },
       });
+
+      // console.log("is payment confirmed :",result);
 
       if (result.error) {
         payBtn.current.disabled = false;
