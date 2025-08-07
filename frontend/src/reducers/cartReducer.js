@@ -2,8 +2,13 @@ import { ADD_TO_CART, REMOVE_CART_ITEM, SAVE_SHIPPING_INFO } from "../constants/
 
 export const cartReducer = (state = {cartItems:[],shippingInfo:{}},action) => {
     switch(action.type){
+    case "LOAD_USER_CART":
+    return {
+    ...state,
+    cartItems: action.payload,
+   };
+
     case ADD_TO_CART:
-    // case "LOAD_CART":
         const item = action.payload;
         
         const isItemExist = state.cartItems.find((i) => i.product === item.product);

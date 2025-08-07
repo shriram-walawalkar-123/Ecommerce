@@ -26,11 +26,20 @@ const reducer = combineReducers({
   productReviews:productReviewsReducer
 });
 
+const userInfoFromStorage = localStorage.getItem("user")
+  ? JSON.parse(localStorage.getItem("user"))
+  : null;
+
+const allCarts = JSON.parse(localStorage.getItem("cart")) || {};
+
+const cartItemsFromStorage = userInfoFromStorage
+  ? allCarts[userInfoFromStorage._id] || []
+  : [];
+
 const initialState = {
+  user: { user: userInfoFromStorage },
   cart: {
-    cartItems: localStorage.getItem("cartItems")
-      ? JSON.parse(localStorage.getItem("cartItems"))
-      : [],
+    cartItems: cartItemsFromStorage,
     shippingInfo: localStorage.getItem("shippingInfo")
       ? JSON.parse(localStorage.getItem("shippingInfo"))
       : [],

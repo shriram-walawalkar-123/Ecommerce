@@ -38,6 +38,8 @@ import UsersList from './component/Admin/UsersList';
 import UpdateUser from './component/Admin/UpdateUser';
 import ProductReviews from './component/Admin/ProductReviews';
 import { baseURL } from './config/config';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const App = () => {
   const { user, isAuthenticated } = useSelector(state => state.user);
@@ -89,63 +91,65 @@ const App = () => {
 }, [isAuthenticated, stripeApiKey]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900">
+      <div className="text-gray-900 dark:text-white">Loading...</div>
+    </div>;
   }
 
   const stripePromise = stripeApiKey ? loadStripe(stripeApiKey) : null;
 
   return (
     <Provider store={store}>
-      <Router>
-        <div className="min-h-screen flex flex-col bg-gray-50">
-          <Header />
-          {isAuthenticated && <UserOptions user={user} />}
-          <main className="flex-grow">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/product/:id" element={<ProductDetails />} />
-              <Route path="/products" element={<Products />} />
-              <Route path="/products/:keyword" element={<Products />} />
-              <Route path="/search" element={<Search />} />
-              <Route path="/login" element={<LoginAndSignUp />} />
-              <Route path="/password/forgot" element={<ForgotPassword/>} />
-              <Route path='/password/reset/:token' element={<ResetPassword/>}/>
-              <Route path='/cart' element={<Cart/>}/>
+      {/* ✅ Wrap everything with ThemeProvider */}
+        <Router>
+          <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+            <Header/>
+            {isAuthenticated && <UserOptions user={user} />}
+            <main className="flex-grow">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/product/:id" element={<ProductDetails />} />
+                <Route path="/products" element={<Products />} />
+                <Route path="/products/:keyword" element={<Products />} />
+                <Route path="/search" element={<Search />} />
+                <Route path="/login" element={<LoginAndSignUp />} />
+                <Route path="/password/forgot" element={<ForgotPassword/>} />
+                <Route path='/password/reset/:token' element={<ResetPassword/>}/>
+                <Route path='/cart' element={<Cart/>}/>
 
-              <Route element={<ProtectedRoute/>}>
-              <Route path="/account" element={<Profile/>} />
-              <Route path="/me/update" element={<UpdateProfile/>} />
-              <Route path="/password/update" element={<UpdatePassword/>} />
-              <Route path="/shipping" element={<Shipping/>} />
-              <Route path="/success" element={<OrderSuccess/>} />
-              <Route path="/orders" element={<MyOrder/>} />
-              <Route path="/order/confirm" element={<ConfirmOrder/>} />
-              <Route path="/order/:id" element={<OrderDetails/>} />
-              <Route  isAdmin={true} path="/admin/dashboard" element={<Dashboard/>} />
-              <Route  isAdmin={true} path="/admin/products" element={<ProductList/>} />
-              <Route  isAdmin={true} path="/admin/product" element={<NewProduct/>} />
-              <Route  isAdmin={true} path="/admin/product/:id" element={<UpdateProduct/>} />
-              <Route  isAdmin={true} path="/admin/orders" element={<OrderList/>} />
-              <Route  isAdmin={true} path="/admin/order/:id" element={<ProcessOrder/>} />
-              <Route  isAdmin={true} path="/admin/users" element={<UsersList/>} />
-              <Route  isAdmin={true} path="/admin/user/:id" element={<UpdateUser/>} />
-              <Route  isAdmin={true} path="/admin/reviews" element={<ProductReviews/>}/>
-              </Route>
-              
-              {stripeApiKey && stripePromise && (
-              <Route element={<ProtectedRoute />}>
-              <Route
-              path="/process/payment"
-              element={<Elements stripe={stripePromise}> <Payment /></Elements>}/>
-              </Route>
-              )}
+                <Route element={<ProtectedRoute/>}>
+                <Route path="/account" element={<Profile/>} />
+                <Route path="/me/update" element={<UpdateProfile/>} />
+                <Route path="/password/update" element={<UpdatePassword/>} />
+                <Route path="/shipping" element={<Shipping/>} />
+                <Route path="/success" element={<OrderSuccess/>} />
+                <Route path="/orders" element={<MyOrder/>} />
+                <Route path="/order/confirm" element={<ConfirmOrder/>} />
+                <Route path="/order/:id" element={<OrderDetails/>} />
+                <Route  isAdmin={true} path="/admin/dashboard" element={<Dashboard/>} />
+                <Route  isAdmin={true} path="/admin/products" element={<ProductList/>} />
+                <Route  isAdmin={true} path="/admin/product" element={<NewProduct/>} />
+                <Route  isAdmin={true} path="/admin/product/:id" element={<UpdateProduct/>} />
+                <Route  isAdmin={true} path="/admin/orders" element={<OrderList/>} />
+                <Route  isAdmin={true} path="/admin/order/:id" element={<ProcessOrder/>} />
+                <Route  isAdmin={true} path="/admin/users" element={<UsersList/>} />
+                <Route  isAdmin={true} path="/admin/user/:id" element={<UpdateUser/>} />
+                <Route  isAdmin={true} path="/admin/reviews" element={<ProductReviews/>}/>
+                </Route>
+                
+                {stripeApiKey && stripePromise && (
+                <Route element={<ProtectedRoute />}>
+                <Route
+                path="/process/payment"
+                element={<Elements stripe={stripePromise}> <Payment /></Elements>}/>
+                </Route>
+                )}
 
-
-            </Routes>
-          </main>
-          <Footer />
-        </div>
-      </Router>
+              </Routes>
+            </main>
+            <Footer />
+          </div>
+        </Router>
     </Provider>
   );
 };

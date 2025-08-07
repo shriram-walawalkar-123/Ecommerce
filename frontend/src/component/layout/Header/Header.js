@@ -1,16 +1,14 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import logo from "./logo512.png";
 import { useSelector, useDispatch } from "react-redux";
 import { logOut } from "../../../actions/userActions";
-import { ShoppingCart} from 'lucide-react';
+import { ShoppingCart } from "lucide-react";
 
 const Header = () => {
   const [searchInput, setSearchInput] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isAuthenticated, user } = useSelector((state) => state.user);
-  
   const {cartItems} = useSelector(state => state.cart);
 
   const handleSearch = (e) => {
@@ -28,18 +26,17 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-gray-800 text-white shadow-md">
+    <header className="bg-gray-800 dark:bg-gray-900 text-white shadow-md transition-colors duration-300">
       <div className="container mx-auto px-4 flex items-center justify-between py-4">
         <Link to="/" className="flex items-center space-x-2">
-          <img src={logo} alt="Logo" className="h-8 w-8" />
           <span className="text-lg font-bold">E-Commerce</span>
         </Link>
 
         <nav className="hidden md:flex space-x-4">
-          <Link to="/" className="hover:text-blue-400">
+          <Link to="/" className="hover:text-blue-400 transition-colors">
             Home
           </Link>
-          <Link to="/products" className="hover:text-blue-400">
+          <Link to="/products" className="hover:text-blue-400 transition-colors">
             Products
           </Link>
         </nav>
@@ -47,7 +44,7 @@ const Header = () => {
         <div className="flex items-center space-x-4">
           <form
             onSubmit={handleSearch}
-            className="hidden md:flex items-center bg-gray-700 rounded-full px-4 py-1"
+            className="hidden md:flex items-center bg-gray-700 dark:bg-gray-800 rounded-full px-4 py-1 transition-colors"
           >
             <input
               type="text"
@@ -56,7 +53,7 @@ const Header = () => {
               onChange={(e) => setSearchInput(e.target.value)}
               className="bg-transparent outline-none text-sm text-white placeholder-gray-400"
             />
-            <button type="submit" className="text-blue-400 hover:text-blue-500">
+            <button type="submit" className="text-blue-400 hover:text-blue-500 transition-colors">
               <i className="fas fa-search"></i>
             </button>
           </form>
@@ -65,7 +62,7 @@ const Header = () => {
             {isAuthenticated ? (
               <>
                 <span className="hidden md:block text-sm">Hi, {user?.name}</span>
-                <Link to="/cart" className="relative hover:text-blue-400">
+                <Link to="/cart" className="relative hover:text-blue-400 transition-colors">
                   <ShoppingCart className="w-6 h-6" />
                   {cartItems.length > 0 && (
                     <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
@@ -75,7 +72,7 @@ const Header = () => {
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                  className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors"
                 >
                   Logout
                 </button>
@@ -83,7 +80,7 @@ const Header = () => {
             ) : (
               <Link
                 to="/login"
-                className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition-colors"
               >
                 Login
               </Link>

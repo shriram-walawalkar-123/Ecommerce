@@ -1,14 +1,26 @@
 // Cart.js
-import React from 'react';
+import {React,useEffect} from 'react';
 import {useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItemToCart, removeItemsFromCart } from '../../actions/cartAction';
 import CartItemCard from "./CartItemCard";
 
 const Cart = () => {
-    const dispatch = useDispatch();
-    const { cartItems } = useSelector(state => state.cart);
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { cartItems } = useSelector((state) => state.cart);
+  const { user } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    if (user) {
+      const allCarts = JSON.parse(localStorage.getItem("cart")) || {};
+      const userCart = allCarts[user._id] || [];
+      dispatch({
+        type: "LOAD_USER_CART",
+        payload: userCart,
+      });
+    }
+  }, [user, dispatch]);
 
     const increaseQuantity = (id, quantity, stock) => {
       const newQty = quantity + 1;
