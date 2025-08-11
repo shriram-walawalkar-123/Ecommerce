@@ -3,6 +3,7 @@ const ApiFeatures = require('../utils/apiFeatures');
 const Product = require("../models/productModel");
 const cloudinary = require("cloudinary");
 const catchAsyncError = require('../middlewares/catchAsyncError');
+const client = require('../redisClient');
 
 //create a product --> Admin
 exports.createProduct = catchAsyncError(async (req, res, next) => {
@@ -69,7 +70,6 @@ exports.createProduct = catchAsyncError(async (req, res, next) => {
       });
     }
   });
-   
 
 //get all products
 exports.getAllProducts = catchAsyncError(async (req, res) => {
@@ -77,28 +77,45 @@ exports.getAllProducts = catchAsyncError(async (req, res) => {
         ? Number(req.query.limit)
         : 5;
 
+    // Create a unique cache key based on query params
+    const cacheKey = `products:all:${JSON.stringify(req.query)}`;
+
+    // Check Redis cache
+    const cachedData = await client.get(cacheKey);
+    if (cachedData) {
+        console.log('Cache hit: Products list');
+        return res.status(200).json(JSON.parse(cachedData));
+    }
+
+    console.log('Cache miss: Products list');
+
     const productsCount = await Product.countDocuments();
 
     const apiFeature = new ApiFeatures(Product.find(), req.query).search().filter();
 
-    // Manually recreate the query to count filtered products
+    // Count filtered products
     const filteredQuery = new ApiFeatures(Product.find(), req.query).search().filter();
     const filteredProductsCount = await filteredQuery.query.countDocuments();
 
-    // Apply pagination to the query
+    // Pagination
     apiFeature.pagination(resultPerPage);
 
-    // Get final paginated products
+    // Get products
     const products = await apiFeature.query;
 
-    res.status(200).json({
+    const responseData = {
         success: true,
         message: "All products fetched successfully!",
         products,
         productsCount,
         filteredProductsCount,
         resultPerPage,
-    });
+    };
+
+    // Store in Redis for 60 seconds
+    await client.setEx(cacheKey, 60, JSON.stringify(responseData));
+
+    res.status(200).json(responseData);
 });
 
 //get All Products By admin

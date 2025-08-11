@@ -3,7 +3,7 @@ const ErrorHandler = require('../utils/errorHandler');
 const catchAsyncError = require('../middlewares/catchAsyncError');
 const ApiFeatures = require('../utils/apiFeatures');
 const Product = require('../models/productModel');
-
+const client = require('../redisClient');
 
 //create new Order
 exports.newOrder = catchAsyncError(async (req, res, next) => {
@@ -66,15 +66,36 @@ exports.getSignleOrder = catchAsyncError(async(req,res,next)=>{
 })
 
 //get logged in user Orders
-exports.myOrders = catchAsyncError(async(req,res,next)=>{ 
-    const orders = await Order.find({user:req.user._id});
+exports.myOrders = catchAsyncError(async (req, res, next) => {
+    try {
+        const cacheKey = `orders:${req.user._id}`;
 
-    res.status(200).json({
-        success:true,
-        orders
-    })
-})
+        // 1️⃣ Try Redis cache
+        const cached = await client.get(cacheKey);
+        if (cached) {
+            return res.status(200).json({
+                success: true,
+                orders: JSON.parse(cached),
+                fromCache: true
+            });
+        }
 
+        // 2️⃣ Get from DB (lean() avoids circular refs)
+        const orders = await Order.find({ user: req.user._id }).lean();
+
+        // 3️⃣ Store in Redis for 5 minutes
+        await client.setEx(cacheKey, 300, JSON.stringify(orders));
+
+        return res.status(200).json({
+            success: true,
+            orders,
+            fromCache: false
+        });
+    } catch (err) {
+        console.error("Error in myOrders:", err);
+        return next(new ErrorHandler("Internal Server Error", 500));
+    }
+});
 
 //get All Orders for Admin
 exports.getAllOrders = catchAsyncError(async(req,res,next)=>{
